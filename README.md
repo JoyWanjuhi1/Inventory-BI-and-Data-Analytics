@@ -47,13 +47,13 @@ Business Use: Audits vendor concentration risk by aggregating inventory value an
 SQL Elements Used: COUNT(), AVG(), SUM(), LEFT JOIN, GROUP BY, and HAVING clause filtering.
 
 
-###C. Category Deep-Dives via Window Functions
+### C. Category Deep-Dives via Window Functions
 Business Use: Identifies luxury capital concentration by ranking and pulling the top 3 most expensive products isolated within each individual category.
 
 SQL Elements Used: Common Table Expressions (CTEs), Window Functions (DENSE_RANK() OVER (PARTITION BY ...)).
 
 
-###D. Inventory Turnover Velocity Ratio
+### D. Inventory Turnover Velocity Ratio
 Business Use: Tracks operational efficiency by dividing historical item sales directly against live warehouse balances to find stagnant vs. high-velocity stock.
 
 SQL Elements Used: Matrix Pivoting via SUM(CASE WHEN), Mathematical Division, NULLIF() to prevent runtime zero-division crashes.
