@@ -57,3 +57,64 @@ FROM Products p
 INNER JOIN Categories c ON p.category_id = c.category_id
 INNER JOIN Suppliers s ON p.supplier_id = s.supplier_id
 ORDER BY inventory_value DESC;
+
+B. Supplier Performance & Risk Auditing
+Business Use: Audits vendor concentration risk by aggregating inventory value and filtering out low-volume suppliers to pinpoint major dependencies.
+
+SQL Elements Used: COUNT(), AVG(), SUM(), LEFT JOIN, GROUP BY, and HAVING clause filtering.
+
+SQL
+SELECT 
+    s.supplier_name,
+    COUNT(p.product_id) AS total_products_supplied,
+    FORMAT(AVG(p.price), 'C') AS average_item_cost,
+    SUM(p.stock_quantity) AS total_items_in_warehouse,
+    FORMAT(SUM(p.price * p.stock_quantity), 'C') AS total_supplier_value
+FROM Suppliers s
+LEFT JOIN Products p ON s.supplier_id = p.supplier_id
+GROUP BY s.supplier_name
+HAVING COUNT(p.product_id) > 5
+ORDER BY total_items_in_warehouse DESC;
+C. Category Deep-Dives via Window Functions
+Business Use: Identifies luxury capital concentration by ranking and pulling the top 3 most expensive products isolated within each individual category.
+
+SQL Elements Used: Common Table Expressions (CTEs), Window Functions (DENSE_RANK() OVER (PARTITION BY ...)).
+
+SQL
+WITH RankedProducts AS (
+    SELECT 
+        c.category_name,
+        p.product_name,
+        p.price,
+        p.stock_quantity,
+        DENSE_RANK() OVER (PARTITION BY c.category_id ORDER BY p.price DESC) AS price_rank
+    FROM Products p
+    JOIN Categories c ON p.category_id = c.category_id
+)
+SELECT category_name, product_name, price, stock_quantity, price_rank
+FROM RankedProducts
+WHERE price_rank <= 3;
+D. Inventory Turnover Velocity Ratio
+Business Use: Tracks operational efficiency by dividing historical item sales directly against live warehouse balances to find stagnant vs. high-velocity stock.
+
+SQL Elements Used: Matrix Pivoting via SUM(CASE WHEN), Mathematical Division, NULLIF() to prevent runtime zero-division crashes.
+
+SQL
+SELECT TOP 15
+    p.product_name,
+    p.stock_quantity AS current_stock,
+    SUM(CASE WHEN t.transaction_type = 'OUT' THEN t.quantity ELSE 0 END) AS total_units_sold,
+    CAST(SUM(CASE WHEN t.transaction_type = 'OUT' THEN t.quantity ELSE 0 END) AS DECIMAL(10,2)) / 
+    NULLIF(p.stock_quantity, 0) AS sales_to_stock_ratio
+FROM Products p
+LEFT JOIN StockTransactions t ON p.product_id = t.product_id
+GROUP BY p.product_id, p.product_name, p.stock_quantity
+ORDER BY sales_to_stock_ratio DESC;
+🚀 4. Technical Skills Proven
+Relational Database Architecture: Table structuring, Primary/Foreign keys, constraints (CHECK, UNIQUE).
+
+Advanced Analytical SQL: Data grouping, aggregations, conditional matrix filtering, subqueries.
+
+Enterprise Features: Common Table Expressions (CTEs), Window functions, Database automation (Triggers).
+
+Data Modeling & Testing: Simulating high-traffic transactional schemas with looping mock datasets.
