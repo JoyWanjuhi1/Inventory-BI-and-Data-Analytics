@@ -58,7 +58,7 @@ INNER JOIN Categories c ON p.category_id = c.category_id
 INNER JOIN Suppliers s ON p.supplier_id = s.supplier_id
 ORDER BY inventory_value DESC;
 
-B. Supplier Performance & Risk Auditing
+### B. Supplier Performance & Risk Auditing
 Business Use: Audits vendor concentration risk by aggregating inventory value and filtering out low-volume suppliers to pinpoint major dependencies.
 
 SQL Elements Used: COUNT(), AVG(), SUM(), LEFT JOIN, GROUP BY, and HAVING clause filtering.
@@ -75,7 +75,8 @@ LEFT JOIN Products p ON s.supplier_id = p.supplier_id
 GROUP BY s.supplier_name
 HAVING COUNT(p.product_id) > 5
 ORDER BY total_items_in_warehouse DESC;
-C. Category Deep-Dives via Window Functions
+
+###C. Category Deep-Dives via Window Functions
 Business Use: Identifies luxury capital concentration by ranking and pulling the top 3 most expensive products isolated within each individual category.
 
 SQL Elements Used: Common Table Expressions (CTEs), Window Functions (DENSE_RANK() OVER (PARTITION BY ...)).
@@ -94,7 +95,7 @@ WITH RankedProducts AS (
 SELECT category_name, product_name, price, stock_quantity, price_rank
 FROM RankedProducts
 WHERE price_rank <= 3;
-D. Inventory Turnover Velocity Ratio
+###D. Inventory Turnover Velocity Ratio
 Business Use: Tracks operational efficiency by dividing historical item sales directly against live warehouse balances to find stagnant vs. high-velocity stock.
 
 SQL Elements Used: Matrix Pivoting via SUM(CASE WHEN), Mathematical Division, NULLIF() to prevent runtime zero-division crashes.
@@ -110,7 +111,9 @@ FROM Products p
 LEFT JOIN StockTransactions t ON p.product_id = t.product_id
 GROUP BY p.product_id, p.product_name, p.stock_quantity
 ORDER BY sales_to_stock_ratio DESC;
-🚀 4. Technical Skills Proven
+
+
+## 🚀 Technical Skills Proven
 Relational Database Architecture: Table structuring, Primary/Foreign keys, constraints (CHECK, UNIQUE).
 
 Advanced Analytical SQL: Data grouping, aggregations, conditional matrix filtering, subqueries.
